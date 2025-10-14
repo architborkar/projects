@@ -1,0 +1,29 @@
+Goal -
+ESP32 stays powered via a wall adapter normally. When power fails → ESP32 runs on LiPo for ~10–15 seconds → detects loss → sends notification → safely shuts down.
+
+Bill of Materials (BOM) -
+1	ESP32 Dev Board (NodeMCU style)	Main microcontroller	For Wi-Fi + notification logic
+2	TP4056 LiPo Charging Module (with protection)	Charges LiPo battery & supplies power	Input: 5V from adapter, Output: ~4.2V to battery
+3	3.7V LiPo Battery (500–1000 mAh)	Backup power during outage	Choose capacity based on desired runtime
+4	MT3608 Boost Converter (3.7V → 5V)	Steps up LiPo voltage to stable 5V for ESP32	Output set to 5V
+5	5V DC Power Adapter (phone charger)	Normal power source	Powers ESP32 + charges LiPo
+6	Diode (e.g., 1N5819 Schottky)	Prevents reverse current from battery to adapter	Optional but good safety addition
+7	Voltage Divider (2 resistors, e.g., 100 kΩ + 220 kΩ)	Lets ESP32 read adapter 5V presence safely	Connects to analog pin to detect power loss
+8	Micro-USB or DC Jack	Input connector for adapter	Optional, for neat enclosure
+9	Wires / PCB / Connectors	For assembly	Your choice—soldered or screw terminals
+
+Simple Connection Summary -
+Normal Mode (Power ON):
+5V Adapter → TP4056 → charges LiPo battery
+5V Adapter → directly powers ESP32
+ESP32 reads “5V present” via voltage divider on analog pin
+
+Outage Mode (Power OFF):
+TP4056 stops charging
+LiPo now powers ESP32 through MT3608
+ESP32 detects 5V dropped to 0V → sends “Power Outage” notification via Wi-Fi
+
+ESP32 Logic Overview
+Continuously read the analog pin (voltage divider output).
+If the adapter voltage drops (below threshold), trigger a notification (e.g., Blynk, MQTT, Telegram, etc.).
+Optionally, go to deep sleep after sending an alert to save battery.
