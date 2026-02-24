@@ -1,0 +1,7 @@
+Screen Brightness Controller
+
+A Python-based utility to control screen brightness programmatically.
+
+Supported Platforms
+- Windows
+- Raspbian
