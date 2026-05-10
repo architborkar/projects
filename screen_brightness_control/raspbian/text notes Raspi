@@ -1,0 +1,6 @@
+killall xcompmgr
+xcompmgr -c -f -n &
+
+sudo apt update
+sudo apt install picom
+picom &
